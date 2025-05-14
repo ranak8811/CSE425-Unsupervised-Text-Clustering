@@ -1,94 +1,102 @@
-````markdown
 # Unsupervised Text Clustering using BERT Embeddings and Autoencoders on AG News Dataset
 
-## 1. Overview
+## 1\. Overview
 
 This project implements an unsupervised text clustering pipeline to group news articles from the AG News dataset into their respective categories without using predefined labels. The core idea is to leverage powerful pre-trained BERT embeddings for text representation, reduce their dimensionality using an autoencoder neural network, and then apply K-Means clustering to the compressed embeddings. The project explores the effectiveness of this deep learning approach for discovering underlying structures in text data.
 
-## 2. Features
+## 2\. Features
 
-* **Text Embedding**: Utilizes the 'bert-base-uncased' model to generate rich contextual embeddings (768 dimensions) for news articles.
-* **Dimensionality Reduction**: Employs a custom-built autoencoder to reduce the embedding dimension from 768 to 64, aiming to capture the most salient features.
-* **Unsupervised Clustering**: Applies the K-Means algorithm to group the dimension-reduced embeddings into 4 clusters (corresponding to the AG News categories).
-* **Evaluation**: Uses intrinsic clustering metrics (Silhouette Score, Davies-Bouldin Index) to assess cluster quality.
-* **Visualization**: Includes PCA and t-SNE for visualizing the formed clusters in 2D space.
-* **Dataset**: Uses a subset of the standard AG News dataset.
+  * **Text Embedding**: Utilizes the 'bert-base-uncased' model to generate rich contextual embeddings (768 dimensions) for news articles.
+  * **Dimensionality Reduction**: Employs a custom-built autoencoder to reduce the embedding dimension from 768 to 64, aiming to capture the most salient features.
+  * **Unsupervised Clustering**: Applies the K-Means algorithm to group the dimension-reduced embeddings into 4 clusters (corresponding to the AG News categories).
+  * **Evaluation**: Uses intrinsic clustering metrics (Silhouette Score, Davies-Bouldin Index) to assess cluster quality.
+  * **Visualization**: Includes PCA and t-SNE for visualizing the formed clusters in 2D space.
+  * **Dataset**: Uses a subset of the standard AG News dataset.
 
-## 3. Dataset
+## 3\. Dataset
 
 The project uses the **AG News dataset**, a widely used benchmark for text classification and clustering tasks.
-* **Source**: Loaded via the Hugging Face `datasets` library.
-* **Content**: News articles categorized into four classes:
+
+  * **Source**: Loaded via the Hugging Face `datasets` library.
+  * **Content**: News articles categorized into four classes:
     1.  World
     2.  Sports
     3.  Business
     4.  Sci/Tech
-* **Structure**: Each data point consists of `text` (the article content) and `label` (0-3 for the categories). The labels are *not* used during the clustering process but can be used for external validation of the results.
-* **Subsampling**: For this project, a subset of **5,000 articles** from the training set was used to expedite the embedding generation and model training processes, especially when running on CPU.
+  * **Structure**: Each data point consists of `text` (the article content) and `label` (0-3 for the categories). The labels are *not* used during the clustering process but can be used for external validation of the results.
+  * **Subsampling**: For this project, a subset of **5,000 articles** from the training set was used to expedite the embedding generation and model training processes, especially when running on CPU.
 
-## 4. Methodology
+## 4\. Methodology
 
 The pipeline consists of the following stages:
 
 ### 4.1. Text Embedding Generation
+
 1.  **BERT Model**: The `bert-base-uncased` model from the Hugging Face `transformers` library is used.
 2.  **Tokenization**: Texts are tokenized using the corresponding BERT tokenizer, with a maximum length of 128 tokens. Texts are padded or truncated as necessary.
 3.  **Embedding Extraction**: The embedding for the `[CLS]` token from the last hidden state of BERT is used as the representative vector for each news article. This results in a 768-dimensional embedding for each text.
-    * The BERT model is used in evaluation mode (`bert_model.eval()`) as it's only for feature extraction.
+      * The BERT model is used in evaluation mode (`bert_model.eval()`) as it's only for feature extraction.
 
 ### 4.2. Autoencoder for Dimensionality Reduction
+
 An autoencoder is trained to learn a compressed representation of the BERT embeddings.
-* **Architecture**:
-    * **Encoder**:
-        * Input Layer: 768 dimensions (BERT embedding)
-        * Hidden Layer 1: Linear layer (768 $\rightarrow$ 256 units) + ReLU activation
-        * Bottleneck Layer (Latent Space): Linear layer (256 $\rightarrow$ 64 units)
-    * **Decoder**:
-        * Input Layer: 64 dimensions (from bottleneck)
-        * Hidden Layer 1: Linear layer (64 $\rightarrow$ 256 units) + ReLU activation
-        * Output Layer: Linear layer (256 $\rightarrow$ 768 units) - Reconstructs the original embedding
-* **Training**:
-    * Loss Function: Mean Squared Error (MSELoss) between the original and reconstructed embeddings.
-    * Optimizer: Adam.
-    * The encoder part of the trained autoencoder is then used to transform the 768-dim BERT embeddings into 64-dim latent representations.
+
+  * **Architecture**:
+      * **Encoder**:
+          * Input Layer: 768 dimensions (BERT embedding)
+          * Hidden Layer 1: Linear layer (768 $\\rightarrow$ 256 units) + ReLU activation
+          * Bottleneck Layer (Latent Space): Linear layer (256 $\\rightarrow$ 64 units)
+      * **Decoder**:
+          * Input Layer: 64 dimensions (from bottleneck)
+          * Hidden Layer 1: Linear layer (64 $\\rightarrow$ 256 units) + ReLU activation
+          * Output Layer: Linear layer (256 $\\rightarrow$ 768 units) - Reconstructs the original embedding
+  * **Training**:
+      * Loss Function: Mean Squared Error (MSELoss) between the original and reconstructed embeddings.
+      * Optimizer: Adam.
+      * The encoder part of the trained autoencoder is then used to transform the 768-dim BERT embeddings into 64-dim latent representations.
 
 ### 4.3. K-Means Clustering
-The K-Means algorithm is applied to the 64-dimensional latent embeddings obtained from the autoencoder.
-* **Number of Clusters (k)**: Set to 4, corresponding to the known number of categories in the AG News dataset.
 
-## 5. Neural Network Architecture Details
+The K-Means algorithm is applied to the 64-dimensional latent embeddings obtained from the autoencoder.
+
+  * **Number of Clusters (k)**: Set to 4, corresponding to the known number of categories in the AG News dataset.
+
+## 5\. Neural Network Architecture Details
 
 ### 5.1. Block Diagram
+
 *(Please refer to the SVG image previously generated or insert your diagram here if you have one.)*
 A conceptual flow:
-`Input (768-dim BERT Emb.)` $\rightarrow$ `Encoder (Linear 768->256, ReLU, Linear 256->64)` $\rightarrow$ `Latent Space (64-dim)` $\rightarrow$ `Decoder (Linear 64->256, ReLU, Linear 256->768)` $\rightarrow$ `Output (Reconstructed 768-dim Emb.)`
+`Input (768-dim BERT Emb.)` $\\rightarrow$ `Encoder (Linear 768->256, ReLU, Linear 256->64)` $\\rightarrow$ `Latent Space (64-dim)` $\\rightarrow$ `Decoder (Linear 64->256, ReLU, Linear 256->768)` $\\rightarrow$ `Output (Reconstructed 768-dim Emb.)`
 
 ### 5.2. Model Parameter Counting
-* **Autoencoder**:
-    * Encoder:
-        * Layer 1 (768x256 weights + 256 biases) = 196,864 parameters
-        * Layer 2 (256x64 weights + 64 biases) = 16,448 parameters
-        * *Total Encoder Parameters: 213,312*
-    * Decoder:
-        * Layer 1 (64x256 weights + 256 biases) = 16,640 parameters
-        * Layer 2 (256x768 weights + 768 biases) = 197,376 parameters
-        * *Total Decoder Parameters: 214,016*
-    * **Total Autoencoder Trainable Parameters: 427,328**
-* **BERT (`bert-base-uncased`)**: Contains approximately 110 million parameters. These were *not* trained in this project (used as a fixed feature extractor).
+
+  * **Autoencoder**:
+      * Encoder:
+          * Layer 1 (768x256 weights + 256 biases) = 196,864 parameters
+          * Layer 2 (256x64 weights + 64 biases) = 16,448 parameters
+          * *Total Encoder Parameters: 213,312*
+      * Decoder:
+          * Layer 1 (64x256 weights + 256 biases) = 16,640 parameters
+          * Layer 2 (256x768 weights + 768 biases) = 197,376 parameters
+          * *Total Decoder Parameters: 214,016*
+      * **Total Autoencoder Trainable Parameters: 427,328**
+  * **BERT (`bert-base-uncased`)**: Contains approximately 110 million parameters. These were *not* trained in this project (used as a fixed feature extractor).
 
 ### 5.3. Regularization Techniques
-* **Batch Normalization**: Not explicitly used in the autoencoder architecture presented in the notebook.
-* **Dropout**: Not explicitly used in the autoencoder layers. BERT itself contains dropout layers, but these are typically inactive when the model is in `eval()` mode.
-* The primary form of regularization is the **bottleneck layer** in the autoencoder, which forces a compressed representation of the data.
 
-## 6. Setup and Installation
+  * **Batch Normalization**: Not explicitly used in the autoencoder architecture presented in the notebook.
+  * **Dropout**: Not explicitly used in the autoencoder layers. BERT itself contains dropout layers, but these are typically inactive when the model is in `eval()` mode.
+  * The primary form of regularization is the **bottleneck layer** in the autoencoder, which forces a compressed representation of the data.
+
+## 6\. Setup and Installation
 
 To run this project, you'll need Python 3 and the following libraries. You can install them using pip:
 
 ```bash
 pip install torch torchvision torchaudio
 pip install datasets transformers scikit-learn matplotlib seaborn jupyter notebook
-````
+```
 
 **Environment:**
 The notebook was run in a Google Colab environment (as indicated by the ipynb metadata). The device used was CPU (as per `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')` and the output `Using device: cpu`). For significantly faster execution, especially BERT embedding generation and autoencoder training, a GPU environment is highly recommended.
