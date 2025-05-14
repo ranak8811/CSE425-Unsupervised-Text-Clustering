@@ -65,7 +65,10 @@ The K-Means algorithm is applied to the 64-dimensional latent embeddings obtaine
 
 ### 5.1. Block Diagram
 
-*(Please refer to the SVG image previously generated or insert your diagram here if you have one.)*
+Here's a visual representation of the autoencoder's architecture:
+
+[![Autoencoder Block Diagram](https://i.ibb.co/SHpgBr8/Screenshot-2025-05-14-at-11-59-21-AM.png)](https://i.ibb.co/SHpgBr8/Screenshot-2025-05-14-at-11-59-21-AM.png)
+
 A conceptual flow:
 `Input (768-dim BERT Emb.)` $\\rightarrow$ `Encoder (Linear 768->256, ReLU, Linear 256->64)` $\\rightarrow$ `Latent Space (64-dim)` $\\rightarrow$ `Decoder (Linear 64->256, ReLU, Linear 256->768)` $\\rightarrow$ `Output (Reconstructed 768-dim Emb.)`
 
