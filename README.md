@@ -202,8 +202,3 @@ The current intrinsic scores can be used as a reference when comparing against t
   * Paszke, A., et al. (2019). PyTorch: An imperative style, high-performance deep learning library. In Advances in neural information processing systems (pp. 8026-8037).
   * Wolf, T., et al. (2019). HuggingFace's Transformers: State-of-the-art Natural Language Processing. arXiv preprint arXiv:1910.03771.
   * Lhoest, Q., et al. (2021). Datasets: A community library for natural language processing. arXiv preprint arXiv:2109.02846.
-
------
-
-```
-```
