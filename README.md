@@ -1,3 +1,4 @@
+````markdown
 # Unsupervised Text Clustering using BERT Embeddings and Autoencoders on AG News Dataset
 
 ## 1. Overview
@@ -87,7 +88,111 @@ To run this project, you'll need Python 3 and the following libraries. You can i
 ```bash
 pip install torch torchvision torchaudio
 pip install datasets transformers scikit-learn matplotlib seaborn jupyter notebook
-Environment:The notebook was run in a Google Colab environment (as indicated by the ipynb metadata).The device used was CPU (as per device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') and the output Using device: cpu). For significantly faster execution, especially BERT embedding generation and autoencoder training, a GPU environment is highly recommended.7. Usage / Running the CodeDownload the Notebook: Obtain the CSE425_ChatGPT.ipynb file.Set up Environment: Ensure all dependencies listed above are installed.Open in Jupyter: Launch Jupyter Notebook or JupyterLab and open the .ipynb file.jupyter notebook CSE425_ChatGPT.ipynb
-Alternatively, upload and run it in Google Colab.Run Cells: Execute the cells in the notebook sequentially.The first cell installs and imports necessary libraries.Subsequent cells set up the device, load the dataset, initialize the BERT tokenizer and model, define the AGNewsDataset class for embedding generation, create the autoencoder model, train the autoencoder, extract latent embeddings, perform K-Means clustering, and finally evaluate and visualize the clusters.Key Parameters in the Notebook:sample_size = 5000: Number of articles to use from the dataset.batch_size = 64: Batch size for training the autoencoder.input_dim = 768: Dimension of BERT embeddings.embedding_dim = 64: Dimension of the autoencoder's bottleneck layer.learning_rate = 0.001: Learning rate for the Adam optimizer.epochs = 20: Number of epochs for training the autoencoder.n_clusters = 4: Number of clusters for K-Means.8. Hyperparameter Optimization and TuningThe hyperparameters were primarily set to common default values or reasonable choices for this task:Autoencoder Architecture: The (768 → 256 → 64 → 256 → 768) structure was chosen. The bottleneck dimension of 64 is a significant reduction and was a primary point for potential tuning.Learning Rate, Epochs, Batch Size: Values like 0.001 for learning rate, 20 epochs, and batch size 64 are standard starting points.Tuning Approach: The notebook shows the autoencoder training loss decreasing over epochs, indicating learning. A more rigorous hyperparameter search (e.g., grid search over bottleneck dimensions, learning rates) could be performed if computational resources allow, using intrinsic clustering metrics as the optimization objective.9. Results and Evaluation9.1. Intrinsic Clustering MetricsThe quality of the clusters formed by K-Means on the 64-dimensional autoencoder embeddings was assessed using:Silhouette Score: 0.0643Davies-Bouldin Index: 3.2711These scores suggest that the clusters have some overlap and are not perfectly separated. A Silhouette Score closer to 1 and a Davies-Bouldin Index closer to 0 would indicate better clustering.9.2. Determining Clustering Accuracy (Unsupervised Context)In an unsupervised setting, "accuracy" is typically assessed by comparing the formed clusters to known ground-truth classes (if available for evaluation purposes, like in AG News). This involves:Mapping Clusters to True Labels: Since K-Means assigns arbitrary cluster IDs (0, 1, 2, 3), these need to be mapped to the actual news categories (World, Sports, etc.). This can be done using:Majority Voting: For each cluster, find the most frequent true label among its members and assign that label to the cluster.Hungarian Algorithm: An optimal assignment algorithm that maximizes the number of correctly classified samples after clustering.Calculating Metrics: Once mapped, standard classification metrics like Accuracy, Purity, Normalized Mutual Information (NMI), and Adjusted Rand Index (ARI) can be computed.The notebook focuses on intrinsic metrics, which don't require this mapping.9.3. VisualizationThe notebook uses PCA and t-SNE to reduce the 64-dimensional embeddings to 2 dimensions for visualization. Scatter plots colored by the K-Means assigned cluster labels help in qualitatively assessing the cluster separation.10. Comparison with Existing Clustering MethodsThis project explores a specific pipeline. For a comprehensive comparison:Baselines:K-Means directly on 768-dim BERT embeddings (to see the effect of the autoencoder).K-Means on TF-IDF features.Other Unsupervised Methods:Hierarchical Clustering, DBSCAN.Topic Modeling (e.g., LDA).More advanced deep clustering methods (e.g., DEC, IDEC) that jointly learn representations and clusters.The current intrinsic scores can be used as a reference when comparing against these other approaches on the same dataset subset.11. Limitations and ObstaclesComputational Resources: Training on CPU is slow. Using a GPU would significantly speed up BERT embedding generation and autoencoder training, allowing for experiments on the full dataset and more extensive hyperparameter tuning.Dataset Subsampling: Using only 5,000 samples might limit the model's ability to learn generalizable features and could affect the overall clustering quality.Hyperparameter Sensitivity: The performance of both the autoencoder and K-Means can be sensitive to hyperparameter choices. The current setup uses initial reasonable values; further tuning is likely to improve results.Evaluation Challenges: Intrinsic metrics provide some insight but don't always correlate perfectly with how humans might perceive cluster quality or how well clusters align with external (true) categories.Sequential Approach: The autoencoder is trained for reconstruction, not explicitly for creating a cluster-friendly latent space. Joint optimization techniques might yield better clustering.12. Future WorkRun experiments on the full AG News dataset using GPU resources.Conduct a systematic hyperparameter search for the autoencoder (bottleneck dimension, layer sizes, learning rate, activation functions) and K-Means.Experiment with different pooling strategies for BERT embeddings (e.g., mean pooling).Incorporate regularization techniques like Dropout or Batch Normalization in the autoencoder.Compare results with other clustering algorithms and dimensionality reduction techniques (e.g., PCA directly on BERT embeddings).Explore end-to-end deep clustering models.Perform external validation by mapping clusters to true labels and calculating metrics like NMI, ARI, and Purity.13. ReferencesDevlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2018). Bert: Pre-training of deep bidirectional transformers for language understanding. arXiv preprint arXiv:1810.04805.Zhang, X., Zhao, J., & LeCun, Y. (2015). Character-level convolutional networks for text classification. In Advances in neural information processing systems (pp. 649-657).Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. Journal of machine learning research, 12(Oct), 2825-2830.Paszke, A., et al. (2019). PyTorch: An imperative style, high-performance deep learning library. In Advances in neural information processing systems (pp. 8026-8037).Wolf, T., et al. (2019). HuggingFace's Transformers: State-of-the-art Natural Language Processing. arXiv preprint arXiv:1910.03771.Lhoest, Q., et al. (2021). Datasets: A community library for natural language processing. arXiv preprint arXiv:2109.02846.14. License(Specify your project's license here, e.g., MIT, Apache 2.0, or state if it's for academic/personal use only).Example:This project is licensed under the MIT License - see the LICENSE.md file for details.
-(If you don't have a LICENSE.md, you can omit this or choose a suitable open-source license).
+````
 
+**Environment:**
+The notebook was run in a Google Colab environment (as indicated by the ipynb metadata). The device used was CPU (as per `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')` and the output `Using device: cpu`). For significantly faster execution, especially BERT embedding generation and autoencoder training, a GPU environment is highly recommended.
+
+## 7\. Usage / Running the Code
+
+1.  **Download the Notebook**: Obtain the `Analysis_of_AG_News.ipynb` file.
+2.  **Set up Environment**: Ensure all dependencies listed above are installed.
+3.  **Open in Jupyter**: Launch Jupyter Notebook or JupyterLab and open the `.ipynb` file.
+    ```bash
+    jupyter notebook Analysis_of_AG_News.ipynb
+    ```
+    Alternatively, upload and run it in Google Colab.
+4.  **Run Cells**: Execute the cells in the notebook sequentially. The first cell installs and imports necessary libraries. Subsequent cells set up the device, load the dataset, initialize the BERT tokenizer and model, define the AGNewsDataset class for embedding generation, create the autoencoder model, train the autoencoder, extract latent embeddings, perform K-Means clustering, and finally evaluate and visualize the clusters.
+
+**Key Parameters in the Notebook:**
+
+  * `sample_size = 5000`: Number of articles to use from the dataset.
+  * `batch_size = 64`: Batch size for training the autoencoder.
+  * `input_dim = 768`: Dimension of BERT embeddings.
+  * `embedding_dim = 64`: Dimension of the autoencoder's bottleneck layer.
+  * `learning_rate = 0.001`: Learning rate for the Adam optimizer.
+  * `epochs = 20`: Number of epochs for training the autoencoder.
+  * `n_clusters = 4`: Number of clusters for K-Means.
+
+## 8\. Hyperparameter Optimization and Tuning
+
+The hyperparameters were primarily set to common default values or reasonable choices for this task:
+
+  * **Autoencoder Architecture**: The (768 $\\rightarrow$ 256 $\\rightarrow$ 64 $\\rightarrow$ 256 $\\rightarrow$ 768) structure was chosen. The bottleneck dimension of 64 is a significant reduction and was a primary point for potential tuning.
+  * **Learning Rate, Epochs, Batch Size**: Values like 0.001 for learning rate, 20 epochs, and batch size 64 are standard starting points.
+  * **Tuning Approach**: The notebook shows the autoencoder training loss decreasing over epochs, indicating learning. A more rigorous hyperparameter search (e.g., grid search over bottleneck dimensions, learning rates) could be performed if computational resources allow, using intrinsic clustering metrics as the optimization objective.
+
+## 9\. Results and Evaluation
+
+### 9.1. Intrinsic Clustering Metrics
+
+The quality of the clusters formed by K-Means on the 64-dimensional autoencoder embeddings was assessed using:
+
+  * **Silhouette Score**: 0.0643
+  * **Davies-Bouldin Index**: 3.2711
+
+These scores suggest that the clusters have some overlap and are not perfectly separated. A Silhouette Score closer to 1 and a Davies-Bouldin Index closer to 0 would indicate better clustering.
+
+### 9.2. Determining Clustering Accuracy (Unsupervised Context)
+
+In an unsupervised setting, "accuracy" is typically assessed by comparing the formed clusters to known ground-truth classes (if available for evaluation purposes, like in AG News). This involves:
+
+  * **Mapping Clusters to True Labels**: Since K-Means assigns arbitrary cluster IDs (0, 1, 2, 3), these need to be mapped to the actual news categories (World, Sports, etc.). This can be done using:
+      * **Majority Voting**: For each cluster, find the most frequent true label among its members and assign that label to the cluster.
+      * **Hungarian Algorithm**: An optimal assignment algorithm that maximizes the number of correctly classified samples after clustering.
+  * **Calculating Metrics**: Once mapped, standard classification metrics like Accuracy, Purity, Normalized Mutual Information (NMI), and Adjusted Rand Index (ARI) can be computed.
+
+The `Analysis_of_AG_News.ipynb` notebook focuses on intrinsic metrics, which don't require this mapping.
+
+### 9.3. Visualization
+
+The notebook uses PCA and t-SNE to reduce the 64-dimensional embeddings to 2 dimensions for visualization. Scatter plots colored by the K-Means assigned cluster labels help in qualitatively assessing the cluster separation.
+
+## 10\. Comparison with Existing Clustering Methods
+
+This project explores a specific pipeline. For a comprehensive comparison:
+
+**Baselines:**
+
+  * K-Means directly on 768-dim BERT embeddings (to see the effect of the autoencoder).
+  * K-Means on TF-IDF features.
+
+**Other Unsupervised Methods:**
+
+  * Hierarchical Clustering, DBSCAN.
+  * Topic Modeling (e.g., LDA).
+  * More advanced deep clustering methods (e.g., DEC, IDEC) that jointly learn representations and clusters.
+
+The current intrinsic scores can be used as a reference when comparing against these other approaches on the same dataset subset.
+
+## 11\. Limitations and Obstacles
+
+  * **Computational Resources**: Training on CPU is slow. Using a GPU would significantly speed up BERT embedding generation and autoencoder training, allowing for experiments on the full dataset and more extensive hyperparameter tuning.
+  * **Dataset Subsampling**: Using only 5,000 samples might limit the model's ability to learn generalizable features and could affect the overall clustering quality.
+  * **Hyperparameter Sensitivity**: The performance of both the autoencoder and K-Means can be sensitive to hyperparameter choices. The current setup uses initial reasonable values; further tuning is likely to improve results.
+  * **Evaluation Challenges**: Intrinsic metrics provide some insight but don't always correlate perfectly with how humans might perceive cluster quality or how well clusters align with external (true) categories.
+  * **Sequential Approach**: The autoencoder is trained for reconstruction, not explicitly for creating a cluster-friendly latent space. Joint optimization techniques might yield better clustering.
+
+## 12\. Future Work
+
+  * Run experiments on the full AG News dataset using GPU resources.
+  * Conduct a systematic hyperparameter search for the autoencoder (bottleneck dimension, layer sizes, learning rate, activation functions) and K-Means.
+  * Experiment with different pooling strategies for BERT embeddings (e.g., mean pooling).
+  * Incorporate regularization techniques like Dropout or Batch Normalization in the autoencoder.
+  * Compare results with other clustering algorithms and dimensionality reduction techniques (e.g., PCA directly on BERT embeddings).
+  * Explore end-to-end deep clustering models.
+  * Perform external validation by mapping clusters to true labels and calculating metrics like NMI, ARI, and Purity.
+
+## 13\. References
+
+  * Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2018). Bert: Pre-training of deep bidirectional transformers for language understanding. arXiv preprint arXiv:1810.04805.
+  * Zhang, X., Zhao, J., & LeCun, Y. (2015). Character-level convolutional networks for text classification. In Advances in neural information processing systems (pp. 649-657).
+  * Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. Journal of machine learning research, 12(Oct), 2825-2830.
+  * Paszke, A., et al. (2019). PyTorch: An imperative style, high-performance deep learning library. In Advances in neural information processing systems (pp. 8026-8037).
+  * Wolf, T., et al. (2019). HuggingFace's Transformers: State-of-the-art Natural Language Processing. arXiv preprint arXiv:1910.03771.
+  * Lhoest, Q., et al. (2021). Datasets: A community library for natural language processing. arXiv preprint arXiv:2109.02846.
+
+-----
+
+```
+```
